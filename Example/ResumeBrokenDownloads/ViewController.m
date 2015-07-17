@@ -27,7 +27,6 @@
         }
         NSLog(@"%@",cachedUrl.absoluteString);
     }];
-
 }
 
 - (IBAction)resume:(id)sender {
