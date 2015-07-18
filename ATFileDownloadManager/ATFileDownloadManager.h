@@ -10,12 +10,11 @@
 
 typedef void(^ATFileDownloaderProgressBlock)(NSInteger receivedSize, NSInteger expectedSize);
 typedef void(^ATFileDownloaderCompletedBlock)(NSURL *cachedUrl, NSError *error);
+typedef void(^ATFileDownloaderCanceledBlock)();
 typedef void(^ATFileDownloaderNoParamBlock)();
 
 @interface ATFileDownloadManager : NSObject
 
-// 文件下载进度
-@property (nonatomic, assign, readonly) CGFloat progress;
 
 + (instancetype)sharedManager;
 
@@ -26,19 +25,25 @@ typedef void(^ATFileDownloaderNoParamBlock)();
  *  @param progress   下载进度
  *  @param completion 完成后执行的操作
  */
-- (void)downloadWithURLString:(NSString *)urlString
-                     progress:(ATFileDownloaderProgressBlock)progress
-                   completion:(ATFileDownloaderCompletedBlock)completion;
+- (NSURLSessionDataTask *)downloadWithURL:(NSURL *)url
+                                 progress:(ATFileDownloaderProgressBlock)progress
+                               completion:(ATFileDownloaderCompletedBlock)completion;
 
 /**
  *  开始或恢复下载任务
  */
-- (void)resume;
+- (void)resumeAll;
 
 /**
  *  挂起下载任务
  */
-- (void)suspend;
+- (void)suspendAll;
+
+/**
+ *  取消所有任务
+ */
+- (void)cancelAllTask;
+- (void)cancelTaskWithURL:(NSString *)urlString;
 
 /**
  *  清除文件硬盘缓存
@@ -52,9 +57,6 @@ typedef void(^ATFileDownloaderNoParamBlock)();
  */
 - (void)clearDiskOnCompletion:(ATFileDownloaderNoParamBlock)block;
 
-/**
- *  是否开启调试打印(可查看下载进度等信息)
- */
-@property (nonatomic, assign) BOOL at_debugLogEnabled;
+
 
 @end

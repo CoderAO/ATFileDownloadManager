@@ -9,33 +9,46 @@
 #import "ViewController.h"
 #import "ATFileDownloadManager.h"
 
-@interface ViewController ()<NSURLSessionDownloadDelegate>
+@interface ViewController ()
 @end
 
 @implementation ViewController
-
 - (void)viewDidLoad {
     [super viewDidLoad];
 
-    ATFileDownloadManager *manager = [ATFileDownloadManager sharedManager];
-    manager.at_debugLogEnabled = YES;
-    [manager downloadWithURLString:@"http://120.25.226.186:32812/resources/videos/minion_01.mp4" progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-        NSLog(@"%f", 1.0 * receivedSize / expectedSize);
-    } completion:^(NSURL *cachedUrl, NSError *error) {
-        if (error) {
-            NSLog(@"%@",error.localizedDescription);
-        }
-        NSLog(@"%@",cachedUrl.absoluteString);
-    }];
-
 }
 
+- (IBAction)addTask:(id)sender {
+    ATFileDownloadManager *manager = [ATFileDownloadManager sharedManager];
+    [manager downloadWithURL:[NSURL URLWithString:@"http://weixin.yamichefs.com/yami/uploadv2/media/20140923/20140923164942_39960.mp4"] progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        NSLog(@"1---%.2f",1.0 * receivedSize / expectedSize);
+
+    } completion:^(NSURL *cachedUrl, NSError *error) {
+        NSLog(@"%@",cachedUrl.absoluteString);
+        if (error) {
+            NSLog(@"%@", error.localizedDescription);
+        }
+    }];
+
+
+    [manager downloadWithURL:[NSURL URLWithString:@"http://weixin.yamichefs.com/yami/uploadv2/media/20140929/20140929105406_38550.mp4"] progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+        NSLog(@"2---%.2f",1.0 * receivedSize / expectedSize);
+
+    } completion:^(NSURL *cachedUrl, NSError *error) {
+        NSLog(@"%@",cachedUrl.absoluteString);
+        if (error) {
+            NSLog(@"%@", error.localizedDescription);
+        }
+    }];
+}
+
+
 - (IBAction)resume:(id)sender {
-    [[ATFileDownloadManager sharedManager] resume];
+    [[ATFileDownloadManager sharedManager] resumeAll];
 }
 
 - (IBAction)pause:(id)sender {
-    [[ATFileDownloadManager sharedManager] suspend];
+    [[ATFileDownloadManager sharedManager] suspendAll];
 }
 - (IBAction)clearCache:(id)sender {
     [[ATFileDownloadManager sharedManager] clearDiskOnCompletion:^{
