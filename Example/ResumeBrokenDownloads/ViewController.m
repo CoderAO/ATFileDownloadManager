@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "ATFileDownloadManager.h"
 
-@interface ViewController ()
+@interface ViewController ()<NSURLSessionDownloadDelegate>
 @end
 
 @implementation ViewController
@@ -27,6 +27,7 @@
         }
         NSLog(@"%@",cachedUrl.absoluteString);
     }];
+
 }
 
 - (IBAction)resume:(id)sender {

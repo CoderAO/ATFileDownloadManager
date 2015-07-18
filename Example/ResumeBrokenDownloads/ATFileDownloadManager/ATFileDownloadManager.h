@@ -26,7 +26,9 @@ typedef void(^ATFileDownloaderNoParamBlock)();
  *  @param progress   下载进度
  *  @param completion 完成后执行的操作
  */
-- (void)downloadWithURLString:(NSString *)urlString progress:(ATFileDownloaderProgressBlock)progress completion:(ATFileDownloaderCompletedBlock)completion;
+- (void)downloadWithURLString:(NSString *)urlString
+                     progress:(ATFileDownloaderProgressBlock)progress
+                   completion:(ATFileDownloaderCompletedBlock)completion;
 
 /**
  *  开始或恢复下载任务

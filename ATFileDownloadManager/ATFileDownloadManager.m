@@ -11,10 +11,10 @@
 
 
 #define CachesPath [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject]
-#define ATFileLengthesMapPath [self.diskCachedPath stringByAppendingPathComponent:@"lengthesMap"]
+#define ATFileLengthesMapPath [self.diskCachedPath stringByAppendingPathComponent:@"lengthesMap.plist"]
 
 #define ATFileName [self.taskUrlString fileName]
-#define ATDownloadFilePath [CachesPath stringByAppendingPathComponent:ATFileName]
+#define ATDownloadFilePath [self.diskCachedPath stringByAppendingPathComponent:ATFileName]
 
 static ATFileDownloadManager *_manager;
 
@@ -39,7 +39,9 @@ static ATFileDownloadManager *_manager;
 
 @implementation ATFileDownloadManager
 
-- (void)downloadWithURLString:(NSString *)urlString progress:(ATFileDownloaderProgressBlock)progress completion:(ATFileDownloaderCompletedBlock)completion {
+- (void)downloadWithURLString:(NSString *)urlString
+                     progress:(ATFileDownloaderProgressBlock)progress
+                   completion:(ATFileDownloaderCompletedBlock)completion {
     self.taskUrlString = urlString;
     self.progressBlock = progress;
     self.completion = completion;
@@ -68,7 +70,9 @@ static ATFileDownloadManager *_manager;
 
 - (NSURLSession *)session {
     if (!_session) {
-        _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:self delegateQueue:[[NSOperationQueue alloc] init]];
+        _session = [NSURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration]
+                                                 delegate:self
+                                            delegateQueue:[[NSOperationQueue alloc] init]];
     }
     return _session;
 }
@@ -98,17 +102,23 @@ static ATFileDownloadManager *_manager;
 
 - (NSOutputStream *)outputStream {
     if (!_outputStream) {
-        _outputStream = [NSOutputStream outputStreamToFileAtPath:self.diskCachedPath append:YES];
+        _outputStream = [NSOutputStream outputStreamToFileAtPath:ATDownloadFilePath append:YES];
     }
     return _outputStream;
 }
 
 - (NSInteger)downloadFileLength {
-    return  [[[NSFileManager defaultManager] attributesOfItemAtPath:self.diskCachedPath error:nil][NSFileSize] integerValue];
+    return  [[[NSFileManager defaultManager] attributesOfItemAtPath:ATDownloadFilePath error:nil][NSFileSize] integerValue];
 }
 
 - (NSString *)diskCachedPath {
-    return ATDownloadFilePath;//[CachesPath stringByAppendingPathComponent:@"ATFileDownloadManagerCache"];
+    NSFileManager *fManager = [NSFileManager defaultManager];
+    NSString *cachedPath = [CachesPath stringByAppendingPathComponent:@"ATFileDownloadManagerCache"];
+    BOOL isDir = YES;
+    if (![fManager fileExistsAtPath:cachedPath isDirectory:&isDir]) {
+        [fManager createDirectoryAtURL:[NSURL fileURLWithPath:cachedPath] withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    return cachedPath;
 }
 
 #pragma mark - NSURLSessionDataDelegate
