@@ -14,6 +14,7 @@
 static ATFileDownloadManager *_manager;
 static NSString * const lengthMapName = @"lengthMap.plist";
 static NSString * const cacheDirectoryName = @"ATFileDownloadManagerCache";
+
 static NSString * const progressCallBackKey = @"progress";
 static NSString * const completionCallBackKey = @"completion";
 static NSString * const cancelCallBackKey = @"cancel";
@@ -69,13 +70,18 @@ static NSString * const outputStreamKey = @"stream";
 
     NSURLSessionDataTask *task = [self.session dataTaskWithRequest:request];
     taskDic[taskKey] = task;
+
     self.tasks[url] = taskDic;
 
     NSLog(@"%@",self.tasks);
+    
+    [task resume];
 
     return task;
-    
-//    [task resume];
+}
+
+- (NSURLSessionDataTask *)taskWithURL:(NSURL *)url {
+    return self.tasks[url][taskKey];
 }
 
 - (void)resumeAll {
@@ -102,10 +108,6 @@ static NSString * const outputStreamKey = @"stream";
     }
 //    [_downloadQueue cancelAllOperations];
 
-}
-
-- (void)cancelTaskWithURL:(NSString *)urlString {
-//    [self.task cancel];
 }
 
 - (void)clearDisk {

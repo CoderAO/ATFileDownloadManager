@@ -19,7 +19,7 @@ typedef void(^ATFileDownloaderNoParamBlock)();
 + (instancetype)sharedManager;
 
 /**
- *  断点下载文件
+ *  添加下载任务并启动该任务,包含了程序重启后的断点下载功能,多次调用不会重复添加任务
  *
  *  @param urlString  文件的地址
  *  @param progress   下载进度
@@ -28,6 +28,15 @@ typedef void(^ATFileDownloaderNoParamBlock)();
 - (NSURLSessionDataTask *)downloadWithURL:(NSURL *)url
                                  progress:(ATFileDownloaderProgressBlock)progress
                                completion:(ATFileDownloaderCompletedBlock)completion;
+
+/**
+ *  根据URL获取下载任务,可以对这些任务进行单独的操作
+ *
+ *  @param url 任务的URL
+ *
+ *  @return URL对应的下载任务
+ */
+- (NSURLSessionDataTask *)taskWithURL:(NSURL *)url;
 
 /**
  *  开始或恢复下载任务
@@ -43,7 +52,6 @@ typedef void(^ATFileDownloaderNoParamBlock)();
  *  取消所有任务
  */
 - (void)cancelAllTask;
-- (void)cancelTaskWithURL:(NSString *)urlString;
 
 /**
  *  清除文件硬盘缓存
